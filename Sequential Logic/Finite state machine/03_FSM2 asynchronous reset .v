@@ -1,26 +1,29 @@
-// Note the Verilog-1995 module declaration syntax here:
-module top_module(clk, reset, in, out);
-    input clk;
-    input reset;    // Synchronous reset to state B
-    input in;
-    output out;//  
+module top_module(
+    input clk,
+    input areset,   
+    input j,
+    input k,
+    output out
+  );  
 
-    // Fill in state name declarations
-	parameter A = 0, B = 1;
-    reg present_state, next_state;
+    parameter OFF=0, ON=1; 
+    reg state, next_state;
 
-    always @(posedge clk) begin
-        if (reset) present_state <=  B;
-        else  present_state <= next_state;
-    end
-       
     always @(*) begin
-        case (present_state)
-            B : next_state <= (in == 1) ? B : A;
-            A : next_state <= (in == 1) ? A : B;
+        // State transition logic
+        case(state)
+            OFF : next_state = (j == 1) ? ON : OFF;
+            ON : next_state = (k == 1) ? OFF : ON;
         endcase
     end
-        
-    assign out = (present_state == B);
+
+    always @(posedge clk, posedge areset) begin
+        // State flip-flops with asynchronous reset
+        if(areset) state <= OFF;
+        else state <= next_state;
+    end
+
+    // Output logic
+            assign out = (state == ON);
 
 endmodule
