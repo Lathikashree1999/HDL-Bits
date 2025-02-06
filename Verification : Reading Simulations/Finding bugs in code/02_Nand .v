@@ -1,5 +1,6 @@
 module top_module (input a, input b, input c, output out);//
-
-    nand inst1 ( out, a, b, c );
-
+	wire out1;
+    andgate inst1 ( out1, a, b, c, 1, 1 );
+	assign out = ~out1;
 endmodule
+
